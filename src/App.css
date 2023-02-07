@@ -1,38 +1,117 @@
-.App {
-  text-align: center;
+.main-div{
+  display: grid;
+  grid-template-columns: auto;
+  gap: 10px;
+  grid-column-gap: 10px;
+  margin: 20% 40%;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.main {
+  margin: 13% 35%;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.color-2{
+  background:  #50C8FF;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.color-4{
+  background: rgb(149, 187, 149);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-8{
+  background: rgb(187, 217, 224);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-16{
+  background: rgb(191, 191, 229);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-32{
+  background: rgb(187, 187, 200);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-64{
+  background: rgb(204, 209, 173);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-128{
+  background: rgb(183, 235, 224);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-256{
+  background: rgb(219, 188, 223);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-512{
+  background: rgb(174, 236, 191);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-1024{
+  background: rgb(224, 238, 168);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.color-2048{
+  background: rgb(150, 215, 232);
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.table-row{
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 2px;
+}
+.cell {
+  height: 100px;
+  width: 100px;
+  background-color: #b29d9d;
+  border-radius: 5px;
+  display: flex;
+  margin: 0px 2px;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* tic tac  */
+.grid-tic{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+    margin: 5% 30%;
+    height: 500px;
+    width: 500px;
+    box-sizing: border-box;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+.buttontic{
+  background: #e4edf2;
+  font-size: 50px;
 }
