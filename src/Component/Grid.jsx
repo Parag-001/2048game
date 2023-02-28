@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import TableData from "./TableData";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Grid = () => {
   const [grid, setGrid] = useState([
@@ -88,12 +90,27 @@ const Grid = () => {
         CheckOverGame(grid, moveUp(grid)) &&
         CheckOverGame(grid, moveDown(grid))
       ) {
-        alert("Game Over");
-        Reset();
         setStatus("Game Over");
       }
     }
   };
+  useEffect(() => {
+    if (Status) {
+      toast.error("Game Over Try Again", {
+        position: "bottom-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setTimeout(() => {
+        Reset();
+      }, 5000);
+    }
+  }, [Status]);
 
   const randomPosition = () => {
     const row = Math.floor(Math.random() * 4);
@@ -153,7 +170,7 @@ const Grid = () => {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
         if (board[i][j] === 2048) {
-          alert("You Won Game");
+          toast.success("You Won Game");
           Reset();
         }
       }
@@ -261,6 +278,7 @@ const Grid = () => {
     const nu = generateRandom(a, true);
     setGrid(nu);
     setScore(0);
+    setStatus("");
   };
 
   useEffect(() => {
@@ -299,6 +317,7 @@ const Grid = () => {
           );
         })}
       </div>
+      <ToastContainer />
     </>
   );
 };
