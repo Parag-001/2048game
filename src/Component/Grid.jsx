@@ -41,7 +41,6 @@ const Grid = () => {
     var diffY = initialY - currentY;
 
     if (Math.abs(diffX) > Math.abs(diffY)) {
-      // sliding horizontally
       if (diffX > 0) {
         setGrid(moveLeft(grid));
       } else {
@@ -195,11 +194,13 @@ const Grid = () => {
     return newBoard;
   };
 
-  const merge = (board) => {
+  const merge = (board, add) => {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length - 1; j++) {
         if (board[i][j] > 0 && board[i][j] === board[i][j + 1]) {
-          setScore(score + board[i][j] * 2);
+          if (add) {
+            setScore(score + board[i][j] * 2);
+          }
           board[i][j] = board[i][j] * 2;
           board[i][j + 1] = 0;
         }
@@ -211,7 +212,7 @@ const Grid = () => {
   const moveLeft = (board) => {
     let flag;
     const nBoard1 = sideLeft(board);
-    const [nBoard2] = merge(nBoard1);
+    const [nBoard2] = merge(nBoard1, true);
     const nBoard3 = sideLeft(nBoard2);
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid.length; j++) {
@@ -228,7 +229,7 @@ const Grid = () => {
   const moveRight = (board) => {
     let flag;
     const nBoard1 = sideRight(board);
-    const [nBoard2] = merge(nBoard1);
+    const [nBoard2] = merge(nBoard1, true);
     const nBoard3 = sideRight(nBoard2);
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid.length; j++) {
