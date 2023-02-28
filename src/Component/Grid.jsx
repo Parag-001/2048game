@@ -9,13 +9,57 @@ const Grid = () => {
     [0, 0, 0, 0],
   ]);
   const [score, setScore] = useState(0);
+  const [Status, setStatus] = useState("");
   let high = localStorage.getItem("HighScore") || 0;
-
   if (score > high) {
     localStorage.setItem("HighScore", score);
   }
 
-  const hasValue = (board) => {
+  var initialX = null;
+  var initialY = null;
+
+  function startTouch(e) {
+    initialX = e.touches[0].clientX;
+    initialY = e.touches[0].clientY;
+  }
+
+  function moveTouch(e) {
+    if (initialX === null) {
+      return;
+    }
+
+    if (initialY === null) {
+      return;
+    }
+
+    var currentX = e.touches[0].clientX;
+    var currentY = e.touches[0].clientY;
+
+    var diffX = initialX - currentX;
+    var diffY = initialY - currentY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // sliding horizontally
+      if (diffX > 0) {
+        setGrid(moveLeft(grid));
+      } else {
+        setGrid(moveRight(grid));
+      }
+    } else {
+      if (diffY > 0) {
+        setGrid(moveUp(grid));
+      } else {
+        setGrid(moveDown(grid));
+      }
+    }
+
+    initialX = null;
+    initialY = null;
+
+    e.preventDefault();
+  }
+
+  const Value = (board) => {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
         if (board[i][j] === 0) {
@@ -25,8 +69,30 @@ const Grid = () => {
     }
     return false;
   };
-  const isFull = (board) => {
-    return !hasValue(board);
+  const CheckOverGame = (board, allError) => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] !== allError[i][j]) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const CheckOver = (grid) => {
+    if (!Value(grid)) {
+      if (
+        CheckOverGame(grid, moveLeft(grid)) &&
+        CheckOverGame(grid, moveRight(grid)) &&
+        CheckOverGame(grid, moveUp(grid)) &&
+        CheckOverGame(grid, moveDown(grid))
+      ) {
+        alert("Game Over");
+        Reset();
+        setStatus("Game Over");
+      }
+    }
   };
 
   const randomPosition = () => {
@@ -35,27 +101,24 @@ const Grid = () => {
     return [row, col];
   };
 
-  const generateRandom = (grid) => {
-    if (isFull(grid)) {
-      alert("Game Is Over");
-      return grid;
-    }
-
+  const generateRandom = (grid, flag) => {
     let [row, col] = randomPosition();
     while (grid[row][col] !== 0) {
       [row, col] = randomPosition();
     }
 
     grid[row][col] = 2;
+    if (flag) {
+      generateRandom(grid);
+    }
     return grid;
   };
-
   useMemo(() => {
-    return generateRandom(grid);
+    return generateRandom(grid, true);
   }, []);
   // useEffect(() => {
-  //   generateRandom(grid);
-  // }, [grid]);
+  //   generateRandom(grid, true);
+  // }, []);
 
   const generateBoard = () =>
     new Array(4).fill(null).map(() => new Array(4).fill(0));
@@ -73,8 +136,30 @@ const Grid = () => {
     }
     return newGrid;
   };
-
-  const rotateLeft = (board) => {
+  const sideRight = (board) => {
+    let newGrid = generateBoard();
+    for (let i = grid.length - 1; i >= 0; i--) {
+      let col = 3;
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] !== 0) {
+          newGrid[i][col] = board[i][j];
+          col--;
+        }
+      }
+    }
+    return newGrid;
+  };
+  const CheckWinner = (board) => {
+    for (let i = 0; i < board.length; i++) {
+      for (let j = 0; j < board[i].length; j++) {
+        if (board[i][j] === 2048) {
+          alert("You Won Game");
+          Reset();
+        }
+      }
+    }
+  };
+  const Up = (board) => {
     let newBoard = generateBoard();
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
@@ -83,7 +168,7 @@ const Grid = () => {
     }
     return newBoard;
   };
-  const rotateRight = (board) => {
+  const Down = (board) => {
     let newBoard = generateBoard();
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[i].length; j++) {
@@ -105,42 +190,51 @@ const Grid = () => {
     }
     return [board];
   };
-  const sideRight = (board) => {
-    let newGrid = generateBoard();
-    for (let i = 0; i < board.length; i++) {
-      let col = 3;
-      for (let j = 0; j < board[i].length; j++) {
-        if (board[i][j] !== 0) {
-          newGrid[i][col] = board[i][j];
-          col--;
-        }
-      }
-    }
-    return newGrid;
-  };
+
   const moveLeft = (board) => {
+    let flag;
     const nBoard1 = sideLeft(board);
     const [nBoard2] = merge(nBoard1);
     const nBoard3 = sideLeft(nBoard2);
-    return generateRandom(nBoard3);
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid.length; j++) {
+        if (board[i][j] !== nBoard3[i][j]) {
+          flag = true;
+        }
+      }
+    }
+    if (flag) {
+      generateRandom(nBoard3);
+    }
+    return nBoard3;
   };
-
   const moveRight = (board) => {
+    let flag;
     const nBoard1 = sideRight(board);
     const [nBoard2] = merge(nBoard1);
     const nBoard3 = sideRight(nBoard2);
-    return generateRandom(nBoard3);
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid.length; j++) {
+        if (grid[i][j] !== nBoard3[i][j]) {
+          flag = true;
+        }
+      }
+    }
+    if (flag) {
+      generateRandom(nBoard3);
+    }
+    return nBoard3;
   };
   const moveUp = (board) => {
-    const nBoard = rotateLeft(board);
+    const nBoard = Up(board);
     const nBoard2 = moveLeft(nBoard);
-    const res = rotateRight(nBoard2);
+    const res = Down(nBoard2);
     return res;
   };
   const moveDown = (board) => {
-    const nBoard = rotateRight(board);
+    const nBoard = Down(board);
     const nBoard2 = moveLeft(nBoard);
-    const res = rotateLeft(nBoard2);
+    const res = Up(nBoard2);
     return res;
   };
 
@@ -164,17 +258,21 @@ const Grid = () => {
   };
   const Reset = () => {
     const a = generateBoard();
-    const nu = generateRandom(a);
+    const nu = generateRandom(a, true);
     setGrid(nu);
     setScore(0);
   };
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
+    CheckWinner(grid);
+    CheckOver(grid);
+    document.addEventListener("touchstart", startTouch, false);
+    document.addEventListener("touchmove", moveTouch, false);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  });
+  }, [grid]);
 
   return (
     <>
@@ -188,9 +286,8 @@ const Grid = () => {
       <button className="btn btn-primary" onClick={() => Reset()}>
         Reset
       </button>
-      <h3 className="text-center">Score Is : {score}</h3>
-      <h3 className="text-center">High Score Is : {high}</h3>
-
+      <h3 className="text-center">Score : {score}</h3>
+      <h3 className="text-center">High Score : {high}</h3>
       <div className="main">
         {grid.map((cur, ind) => {
           return (
