@@ -56,7 +56,7 @@ const Grid = () => {
     initialX = null;
     initialY = null;
 
-    e.preventDefault();
+    // e.preventDefault();
   }
 
   const Value = (board) => {
